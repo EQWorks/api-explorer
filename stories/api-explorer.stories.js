@@ -1,9 +1,11 @@
 import React, { useState } from 'react' // no need to import `React` once 17
 
-
 import { useExplorer } from '../src'
 
-const APIExplorer = () => {
+
+export default { title: 'API Explorer' }
+
+export const Raw = () => { // raw explorer
   const [url, setURL] = useState('https://api.covid19api.com/summary')
   const {
     sample,
@@ -41,10 +43,3 @@ const APIExplorer = () => {
     </div>
   )
 }
-
-export default {
-  title: 'API Explorer',
-  component: APIExplorer,
-}
-
-export const Raw = () => <APIExplorer />

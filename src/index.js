@@ -36,17 +36,17 @@ export const useExplorer = ({ url, fetchOptions }) => {
 
   // infer output from retrieved sample
   const [data, setArray] = useState([])
-  const [path, setPath] = useState([])
+  const [path, setPath] = useState([]) // denotes root path
   const [paths, setPaths] = useState([])
+  // react to initial sample change
   useEffect(() => {
-    if (Array.isArray(sample) && sample.length > 0) {
-      setArray(sample)
-    } else if (typeof sample === 'object' && sample !== null) {
+    setArray([])
+    if (typeof sample === 'object' && sample !== null && !Array.isArray(sample)) {
       // search for Arrays in sample Object
       const paths = findArrayPaths(sample)
       setPaths(paths)
     } else {
-      setArray([])
+      setPaths([])
     }
   }, [sample])
   // react to paths change
@@ -54,14 +54,18 @@ export const useExplorer = ({ url, fetchOptions }) => {
     if (paths && paths.length > 0) {
       // set first array path as default
       setPath(paths[0])
+    } else {
+      setPath([])
     }
   }, [paths])
   // react to path or sample change
   useEffect(() => {
-    if (path && sample) {
+    if (path && path.length > 0 && sample) {
       setArray(getByPath(sample, path))
+    } else if (Array.isArray(sample) && sample.length > 0) {
+      setArray(sample)
     }
-  }, [path, sample])
+  }, [path, sample]) // in theory this reacts only to path change, while sample shouldn't change
 
   return {
     sample,
