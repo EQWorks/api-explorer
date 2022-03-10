@@ -20,6 +20,11 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.17.5",
+    "@eqworks/lumen-table": "^1.4.1",
+    "@eqworks/lumen-ui": "^1.1.2",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@storybook/addon-actions": "^6.4.19",
     "@storybook/addon-essentials": "^6.4.19",
     "@storybook/addon-interactions": "^6.4.19",
