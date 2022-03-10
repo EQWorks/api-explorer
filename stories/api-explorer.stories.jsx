@@ -8,15 +8,33 @@ const APIExplorer = () => {
   const {
     sample,
     // setSample,
-    // array,
-    // arrayPaths,
+    array,
+    arrayPaths,
   } = useExplorer({ url })
 
   return (
     <div>
-      <pre>
-        <code>{JSON.stringify(sample, null, 2)}</code>
-      </pre>
+      <h1>
+        Exploring: <a href={url}>{url}</a>
+      </h1>
+      <div>
+        <h2>Array Paths</h2>
+        <pre>
+          <code>{JSON.stringify(arrayPaths, null, 2)}</code>
+        </pre>
+      </div>
+      <div>
+        <h2>Array Data</h2>
+        <pre>
+          <code>{JSON.stringify(array, null, 2)}</code>
+        </pre>
+      </div>
+      <div>
+        <h2>Raw Sample</h2>
+        <pre>
+          <code>{JSON.stringify(sample, null, 2)}</code>
+        </pre>
+      </div>
     </div>
   )
 }
@@ -26,4 +44,4 @@ export default {
   component: APIExplorer,
 }
 
-export const Empty = () => <APIExplorer />
+export const Raw = () => <APIExplorer />
