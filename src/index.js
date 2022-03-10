@@ -35,26 +35,40 @@ export const useExplorer = ({ url, fetchOptions }) => {
   }, [url, fetchOptions])
 
   // infer output from retrieved sample
-  const [array, setArray] = useState([])
-  const [arrayPaths, setArrayPaths] = useState([])
+  const [data, setArray] = useState([])
+  const [path, setPath] = useState([])
+  const [paths, setPaths] = useState([])
   useEffect(() => {
     if (Array.isArray(sample) && sample.length > 0) {
       setArray(sample)
     } else if (typeof sample === 'object' && sample !== null) {
       // search for Arrays in sample Object
       const paths = findArrayPaths(sample)
-      setArrayPaths(paths)
-      setArray(getByPath(sample, paths[0]))
+      setPaths(paths)
     } else {
       setArray([])
     }
   }, [sample])
+  // react to paths change
+  useEffect(() => {
+    if (paths && paths.length > 0) {
+      // set first array path as default
+      setPath(paths[0])
+    }
+  }, [paths])
+  // react to path or sample change
+  useEffect(() => {
+    if (path && sample) {
+      setArray(getByPath(sample, path))
+    }
+  }, [path, sample])
 
   return {
     sample,
-    setSample,
-    array,
-    arrayPaths,
+    data,
+    paths,
+    path,
+    setPath,
   }
 }
 

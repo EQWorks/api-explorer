@@ -4,29 +4,32 @@ import React, { useState } from 'react' // no need to import `React` once 17
 import { useExplorer } from '../src'
 
 const APIExplorer = () => {
-  const [url] = useState('https://api.covid19api.com/summary')
+  const [url, setURL] = useState('https://api.covid19api.com/summary')
   const {
     sample,
-    // setSample,
-    array,
-    arrayPaths,
+    data,
+    paths,
+    path,
+    // setPath,
   } = useExplorer({ url })
 
   return (
     <div>
-      <h1>
-        Exploring: <a href={url}>{url}</a>
-      </h1>
+      <p>
+        Explore:
+        <input type="text" value={url} onChange={({ target: { value } }) => setURL(value)} />
+      </p>
       <div>
-        <h2>Array Paths</h2>
+        <h2>Array Data Paths</h2>
         <pre>
-          <code>{JSON.stringify(arrayPaths, null, 2)}</code>
+          Paths:
+          <code>{JSON.stringify(paths, null, 2)}</code>
         </pre>
       </div>
       <div>
-        <h2>Array Data</h2>
+        <h2>Array Data (Path: <code>.{path.join('.')}</code>)</h2>
         <pre>
-          <code>{JSON.stringify(array, null, 2)}</code>
+          <code>{JSON.stringify(data, null, 2)}</code>
         </pre>
       </div>
       <div>
