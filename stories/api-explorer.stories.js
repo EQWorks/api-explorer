@@ -64,6 +64,7 @@ export const WithLumenTable = () => {
 
 export const Raw = () => { // raw explorer
   const [url, setURL] = useState('https://api.covid19api.com/summary')
+  const [sampleSize, setSampleSize] = useState(2)
   const {
     sample,
     data,
@@ -77,8 +78,12 @@ export const Raw = () => { // raw explorer
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
       <div>
         <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
+        <div>
+          <label htmlFor="sampleSize">Sample Size:</label>
+          <input name="sampleSize" type="number" value={sampleSize} onChange={({ target: { value } }) => setSampleSize(value)} />
+        </div>
         <pre>
-          <code>{JSON.stringify((data || []).slice(0, 3), null, 2)}</code>
+          <code>{JSON.stringify((data || []).slice(0, sampleSize), null, 2)}</code>
         </pre>
       </div>
       <RawResponse sample={sample} />
