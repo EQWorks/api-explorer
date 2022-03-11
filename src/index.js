@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react'
 
 
-const request = async (...fetchParams) => {
-  const response = await fetch(...fetchParams)
-  const data = await response.json() // TODO: detect and support other content types
-  return data
-}
-
 const findArrayPaths = (obj) => {
   const paths = []
   const findPaths = (obj, path = []) => {
@@ -24,16 +18,7 @@ const findArrayPaths = (obj) => {
 
 const getByPath = (obj, path) => path.reduce((acc, key) => acc[key], obj)
 
-export const useExplorer = ({ url, fetchOptions }) => {
-  // fetch sample data from given API endpoint
-  const [sample, setSample] = useState(null)
-  useEffect(() => {
-    if (url) {
-      // TODO: handle errors
-      request(url, fetchOptions).then(setSample)
-    }
-  }, [url, fetchOptions])
-
+export const useSample = (sample) => {
   // infer output from retrieved sample
   const [data, setArray] = useState([])
   const [path, setPath] = useState([]) // denotes root path
@@ -74,6 +59,25 @@ export const useExplorer = ({ url, fetchOptions }) => {
     path,
     setPath,
   }
+}
+
+const request = async (...fetchParams) => {
+  const response = await fetch(...fetchParams)
+  const data = await response.json() // TODO: detect and support other content types
+  return data
+}
+
+export const useExplorer = ({ url, fetchOptions }) => {
+  // fetch sample data from given API endpoint
+  const [sample, setSample] = useState(null)
+  useEffect(() => {
+    if (url) {
+      // TODO: handle errors
+      request(url, fetchOptions).then(setSample)
+    }
+  }, [url, fetchOptions])
+
+  return useSample(sample)
 }
 
 export default useExplorer

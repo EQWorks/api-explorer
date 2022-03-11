@@ -7,7 +7,7 @@ import { Table } from '@eqworks/lumen-table'
 import { useExplorer } from '../src'
 
 
-export default { title: 'API Explorer' }
+export default { title: 'API Explorer/useExplorer' }
 
 const URLControls = ({ url, setURL, paths, path, setPath }) => (
   <div>
