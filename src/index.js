@@ -20,12 +20,12 @@ const getByPath = (obj, path) => path.reduce((acc, key) => acc[key], obj)
 
 export const useSample = (sample) => {
   // infer output from retrieved sample
-  const [data, setArray] = useState([])
+  const [data, setData] = useState([])
   const [path, setPath] = useState([]) // denotes root path
   const [paths, setPaths] = useState([])
   // react to initial sample change
   useEffect(() => {
-    setArray([])
+    setData([])
     if (typeof sample === 'object' && sample !== null && !Array.isArray(sample)) {
       // search for Arrays in sample Object
       const paths = findArrayPaths(sample)
@@ -46,9 +46,9 @@ export const useSample = (sample) => {
   // react to path or sample change
   useEffect(() => {
     if (path && path.length > 0 && sample) {
-      setArray(getByPath(sample, path))
+      setData(getByPath(sample, path))
     } else if (Array.isArray(sample) && sample.length > 0) {
-      setArray(sample)
+      setData(sample)
     }
   }, [path, sample]) // in theory this reacts only to path change, while sample shouldn't change
 
@@ -61,11 +61,8 @@ export const useSample = (sample) => {
   }
 }
 
-const request = async (...fetchParams) => {
-  const response = await fetch(...fetchParams)
-  const data = await response.json() // TODO: detect and support other content types
-  return data
-}
+// TODO: detect and support other content types
+const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
 
 export const useExplorer = ({ url, fetchOptions }) => {
   // fetch sample data from given API endpoint

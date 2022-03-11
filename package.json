@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "source": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "lint": "eslint src/ stories/"
@@ -20,6 +20,8 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
     "@eqworks/lumen-table": "^1.4.1",
     "@eqworks/lumen-ui": "^1.1.2",
     "@material-ui/core": "^4.12.3",
@@ -31,10 +33,14 @@
     "@storybook/addon-links": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
+    "@testing-library/react-hooks": "^7.0.2",
     "babel-loader": "^8.2.3",
     "eslint": "^8.10.0",
+    "eslint-plugin-jest": "^26.1.1",
     "eslint-plugin-react": "^7.29.3",
+    "jest": "^27.5.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "react-test-renderer": "^16.14.0"
   }
 }
