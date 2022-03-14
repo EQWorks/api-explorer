@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react' // no need to import `React` once 17
+import React, { useState } from 'react' // no need to import `React` once 17
 
 import { ThemeProvider } from '@eqworks/lumen-ui'
 import { Table } from '@eqworks/lumen-table'
-import { PlotlyLineChart as Line } from '@eqworks/chart-system'
 
 import { useExplorer } from '../src'
+import RawDisplay from './components/raw-display'
+import LineChart from './components/line-chart'
 
 
 export default { title: 'API Explorer/useExplorer' }
@@ -42,6 +43,7 @@ const RawResponse = ({ sample }) => (
 export const WithLineChart = () => {
   const [url, setURL] = useState('https://api.coinstats.app/public/v1/coins?skip=0&limit=5&currency=EUR')
   const {
+    sample,
     data,
     paths,
     path,
@@ -50,66 +52,11 @@ export const WithLineChart = () => {
     typedKeys,
   } = useExplorer({ url })
 
-  const [x, setX] = useState(null)
-  const [ys, setYs] = useState([])
-  useEffect(() => {
-    setX((typedKeys.string || [])[0])
-    setYs(typedKeys.number || [])
-  }, [typedKeys])
-
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      <div>
-        {data && keys.length > 0 && (
-          <div style={{ height: '90vh' }}>
-            {Object.keys(typedKeys).length > 0 && (
-              <>
-                <div>
-                  <label htmlFor="x">X:</label>
-                  <select name="x" value={x} onChange={({ target: { value } }) => setX(value)}>
-                    {typedKeys.string.map(key => (
-                      <option key={key} value={key}>
-                        {key}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  {typedKeys.number.map(key => (
-                    <span key={key} style={{ margin: '0 5px' }}>
-                      <label htmlFor={`data-${key}`}>{key}:</label>
-                      <input
-                        name={`data-${key}`}
-                        type="checkbox"
-                        checked={ys.includes(key)}
-                        onChange={({ target: { checked } }) => {
-                          if (checked) {
-                            setYs([...ys, key])
-                          } else {
-                            setYs(ys.filter(y => y !== key))
-                          }
-                        }}
-                      />
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
-            <Line data={data} x={x} y={ys} />
-          </div>
-        )}
-      </div>
-      <div>
-        <p>Raw Data keys:</p>
-        <pre>
-          <code>{JSON.stringify(keys, null, 2)}</code>
-        </pre>
-        <p>Parsed keys by data types:</p>
-        <pre>
-          <code>{JSON.stringify(typedKeys, null, 2)}</code>
-        </pre>
-      </div>
+      <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+      <RawResponse sample={sample} />
     </div>
   )
 }
@@ -128,18 +75,15 @@ export const WithTable = () => {
     <ThemeProvider>
       <div>
         <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-        <div>
-          <Table data={data} isBorder />
-        </div>
-        <RawResponse sample={sample} />
+        <Table data={data} isBorder />
       </div>
+      <RawResponse sample={sample} />
     </ThemeProvider>
   )
 }
 
 export const Raw = () => { // raw explorer
   const [url, setURL] = useState('https://api.covid19api.com/summary')
-  const [sampleSize, setSampleSize] = useState(2)
   const {
     sample,
     data,
@@ -151,18 +95,7 @@ export const Raw = () => { // raw explorer
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      <div>
-        <div>
-          <strong>
-            Array Data Sample
-            <label htmlFor="sampleSize">Sample Size:</label>
-            <input name="sampleSize" type="number" value={sampleSize} onChange={({ target: { value } }) => setSampleSize(value)} />
-          </strong>
-        </div>
-        <pre>
-          <code>{JSON.stringify((data || []).slice(0, sampleSize), null, 2)}</code>
-        </pre>
-      </div>
+      <RawDisplay data={data} />
       <RawResponse sample={sample} />
     </div>
   )
