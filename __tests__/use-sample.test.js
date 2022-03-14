@@ -56,4 +56,23 @@ describe('useSample', () => {
     const { result } = renderHook(() => useSample(sample))
     expect(result.current.data).toStrictEqual(data)
   })
+
+  test.each([
+    [{}, []],
+    [{ a: 1 }, []],
+    [{ a: [{ x: 1, y: 2 }, { x: 3, y: 5 }] }, ['x', 'y']],
+  ])('data keys detection: input=%j would yield keys=%j', (sample, keys) => {
+    const { result } = renderHook(() => useSample(sample))
+    expect(result.current.keys).toStrictEqual(keys)
+  })
+
+  test.each([
+    [{}, {}],
+    [{ a: 1 }, {}],
+    [{ a: [{ x: 1, y: 2 }, { x: 3, y: 5 }] }, { number: ['x', 'y'] }],
+    [{ a: [{ x: 1, y: '2', z: true, w: 3 }, { x: 3, y: '5', z: false, w: -55 }] }, { number: ['x', 'w'], string: ['y'], boolean: ['z'] }],
+  ])('typed keys detection: input=%j would yield typedKyes=%j', (sample, typedKeys) => {
+    const { result } = renderHook(() => useSample(sample))
+    expect(result.current.typedKeys).toStrictEqual(typedKeys)
+  })
 })

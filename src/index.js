@@ -18,23 +18,36 @@ const findArrayPaths = (obj) => {
 
 const getByPath = (obj, path) => path.reduce((acc, key) => acc[key], obj)
 
+const isPrimitive = (value) => typeof value !== 'object'
+
+const buildKeys = (data) => {
+  if (!Array.isArray(data) || data.length === 0 || typeof data[0] !== 'object' || !data[0]) {
+    return []
+  }
+  const keys = []
+  Object.entries((data[0] || {})).forEach(([key, value]) => {
+    if (isPrimitive(value)) {
+      keys.push(key)
+    }
+  })
+  return keys
+}
+
 export const useSample = (sample) => {
-  // infer output from retrieved sample
-  const [data, setData] = useState([])
-  const [path, setPath] = useState([]) // denotes root path
+  // set possible tabular (array) data paths, react to given sample
   const [paths, setPaths] = useState([])
-  // react to initial sample change
   useEffect(() => {
     setData([])
     if (typeof sample === 'object' && sample !== null && !Array.isArray(sample)) {
-      // search for Arrays in sample Object
+      // search for non-empty Arrays in sample Object
       const paths = findArrayPaths(sample)
       setPaths(paths)
     } else {
       setPaths([])
     }
   }, [sample])
-  // react to paths change
+  // set initial tabular data path, react to paths change
+  const [path, setPath] = useState([]) // default [] = root path
   useEffect(() => {
     if (paths && paths.length > 0) {
       // set first array path as default
@@ -43,7 +56,8 @@ export const useSample = (sample) => {
       setPath([])
     }
   }, [paths])
-  // react to path or sample change
+  // find tabular data, react to path or sample change
+  const [data, setData] = useState([])
   useEffect(() => {
     if (path && path.length > 0 && sample) {
       setData(getByPath(sample, path))
@@ -51,6 +65,31 @@ export const useSample = (sample) => {
       setData(sample)
     }
   }, [path, sample]) // in theory this reacts only to path change, while sample shouldn't change
+  // find data keys, react to data change
+  const [keys, setKeys] = useState([])
+  useEffect(() => {
+    try {
+      setKeys(buildKeys(data))
+    } catch(e) {
+      // TODO: handle error
+      setKeys([])
+    }
+  }, [data])
+  // set parsed keys by inferred value type, react to keys or data change
+  const [typedKeys, setTypedKeys] = useState({})
+  useEffect(() => {
+    if (keys && keys.length > 0 && data && data.length > 0) {
+      const parseKeys = {}
+      keys.forEach(key => {
+        const type = typeof data[0][key]
+        parseKeys[type] = parseKeys[type] || []
+        parseKeys[type].push(key)
+      })
+      setTypedKeys(parseKeys)
+    } else {
+      setTypedKeys({})
+    }
+  }, [keys, data])
 
   return {
     sample,
@@ -58,6 +97,8 @@ export const useSample = (sample) => {
     paths,
     path,
     setPath,
+    keys, // raw data keys
+    typedKeys, // parsed keys by inferred value types
   }
 }
 
