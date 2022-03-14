@@ -39,7 +39,7 @@ const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
   </div>
 )
 
-export const WithLumenTable = () => {
+export const WithTable = () => {
   const [sample, setSample] = useState({})
   const {
     data,
@@ -53,7 +53,6 @@ export const WithLumenTable = () => {
       <div>
         <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
         <div>
-          <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
           <Table data={data} isBorder />
         </div>
       </div>
@@ -75,11 +74,11 @@ export const Raw = () => { // raw explorer
     <div>
       <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
       <div>
-        <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
-        <div>
+        <strong>
+          Array Data Sample
           <label htmlFor="sampleSize">Sample Size:</label>
           <input name="sampleSize" type="number" value={sampleSize} onChange={({ target: { value } }) => setSampleSize(value)} />
-        </div>
+        </strong>
         <pre>
           <code>{JSON.stringify((data || []).slice(0, sampleSize), null, 2)}</code>
         </pre>
