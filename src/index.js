@@ -108,14 +108,26 @@ const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json()
 export const useExplorer = ({ url, fetchOptions }) => {
   // fetch sample data from given API endpoint
   const [sample, setSample] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   useEffect(() => {
     if (url) {
       // TODO: handle errors
-      request(url, fetchOptions).then(setSample)
+      setLoading(true)
+      setError(null)
+      setSample(null)
+      request(url, fetchOptions)
+        .then(setSample)
+        .catch(setError)
+        .finally(() => setLoading(false))
     }
   }, [url, fetchOptions])
 
-  return useSample(sample)
+  return {
+    ...useSample(sample),
+    loading,
+    error,
+  }
 }
 
 export default useExplorer

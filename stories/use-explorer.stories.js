@@ -40,6 +40,13 @@ const RawResponse = ({ sample }) => (
   </div>
 )
 
+const ErrorResponse = ({ error }) => (
+  <div>
+    Error:
+    <pre><code>{JSON.stringify(error.stack || error.message || String(error), null, 2)}</code></pre>
+  </div>
+)
+
 export const WithLineChart = () => {
   const [url, setURL] = useState('https://api.coinstats.app/public/v1/coins?skip=0&limit=5&currency=EUR')
   const {
@@ -50,13 +57,25 @@ export const WithLineChart = () => {
     setPath,
     keys,
     typedKeys,
+    loading,
+    error,
   } = useExplorer({ url })
+
+  if (loading) {
+    return (<div>Loading...</div>)
+  }
 
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      <LineChart data={data} keys={keys} typedKeys={typedKeys} />
-      <RawResponse sample={sample} />
+      {error ? (
+        <ErrorResponse error={error} />
+      ) : (
+        <>
+          <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+          <RawResponse sample={sample} />
+        </>
+      )}
     </div>
   )
 }
@@ -69,13 +88,19 @@ export const WithTable = () => {
     paths,
     path,
     setPath,
+    loading,
+    error,
   } = useExplorer({ url })
+
+  if (loading) {
+    return (<div>Loading...</div>)
+  }
 
   return (
     <ThemeProvider>
       <div>
         <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-        <Table data={data} isBorder />
+        {error ? (<ErrorResponse error={error} />) : (<Table data={data} isBorder />)}
       </div>
       <RawResponse sample={sample} />
     </ThemeProvider>
@@ -90,13 +115,25 @@ export const Raw = () => { // raw explorer
     paths,
     path,
     setPath,
+    loading,
+    error,
   } = useExplorer({ url })
+
+  if (loading) {
+    return (<div>Loading...</div>)
+  }
 
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      <RawDisplay data={data} />
-      <RawResponse sample={sample} />
+      {error ? (
+        <ErrorResponse error={error} />
+      ) : (
+        <>
+          <RawDisplay data={data} />
+          <RawResponse sample={sample} />
+        </>
+      )}
     </div>
   )
 }
