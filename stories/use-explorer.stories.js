@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react' // no need to import `React` once 17
 
-import { ThemeProvider } from '@eqworks/lumen-ui'
 import { Table } from '@eqworks/lumen-table'
 
 import { useExplorer } from '../src'
@@ -97,13 +96,13 @@ export const WithTable = () => {
   }
 
   return (
-    <ThemeProvider>
+    <>
       <div>
         <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
         {error ? (<ErrorResponse error={error} />) : (<Table data={data} isBorder />)}
       </div>
       <RawResponse sample={sample} />
-    </ThemeProvider>
+    </>
   )
 }
 

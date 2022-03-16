@@ -1172,14 +1172,14 @@
     pirates "^4.0.5"
     source-map-support "^0.5.16"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.8", "@babel/runtime@^7.16.7", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.8", "@babel/runtime@^7.16.7", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
   version "7.17.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.2.tgz#66f68591605e59da47523c631416b18508779941"
   integrity sha512-hzeyJyMA1YGdJTuWU0e/j4wKXrU4OMFvY2MSlaI9B7VQb0r5cxTE3EAIS2Q7Tn2RIcDkRvTA/v2JsAEhxe99uw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.2.0":
+"@babel/runtime@^7.2.0", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.7":
   version "7.17.7"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.7.tgz#a5f3328dc41ff39d803f311cfe17703418cf9825"
   integrity sha512-L6rvG9GDxaLgFjg41K+5Yv9OMrU98sWe+Ykmc6FDJW/+vYZMhdOMKkISgzptMaERHvS2Y2lw9MDRm2gHhlQQoA==
@@ -1392,22 +1392,29 @@
     react-window "^1.8.6"
     use-debounce "^7.0.1"
 
-"@eqworks/lumen-table@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@eqworks/lumen-table/-/lumen-table-1.4.1.tgz#40461884039ae26005180290bf9611d7c4977a17"
-  integrity sha512-1MTT4NC2O31byoZvvEsFqsvIIaNva1eS2laAzEafUFE5WU8x2P9UCbbWF7SSZLAkIQOb9Lg9AXRuld4v9hk6+A==
+"@eqworks/lumen-labs@^0.1.0-alpha.39", "@eqworks/lumen-labs@^0.1.0-alpha.41":
+  version "0.1.0-alpha.41"
+  resolved "https://registry.yarnpkg.com/@eqworks/lumen-labs/-/lumen-labs-0.1.0-alpha.41.tgz#2e1a2d4815e4670af12295b6b7df92d31add97db"
+  integrity sha512-vk92pmO2EzaPv+aZHoFMCMwtjqFAv/SSZG88Ja42L+JQ9QQHA74lYlm453oJ5MtX2kvy6d2ietsQjlI7Qg0Crw==
   dependencies:
+    "@headlessui/react" "^1.4.0"
+    clsx "^1.1.1"
+    goober "^2.0.39"
+    prop-types "^15.7.2"
+    react-resize-detector "^6.7.6"
+    react-virtualized-auto-sizer "^1.0.5"
+    react-window "^1.8.6"
+    use-debounce "^7.0.1"
+
+"@eqworks/lumen-table@^2.0.0-alpha.2":
+  version "2.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@eqworks/lumen-table/-/lumen-table-2.0.0-alpha.2.tgz#a2fa929cc2dd059206095bc48fe3374470d944bf"
+  integrity sha512-YLI6XdbENUcNWGsd+UQunpzGKI0U/DSJGaZJ0hr5B2yqt1aYlE4zZTWNvCSJkh1BJ9BeFunm/H4XC7FkrfwqNg==
+  dependencies:
+    "@eqworks/lumen-labs" "^0.1.0-alpha.39"
     prop-types "^15.7.2"
     react-table "^7.6.0"
     use-cached "^2.0.0"
-
-"@eqworks/lumen-ui@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@eqworks/lumen-ui/-/lumen-ui-1.1.2.tgz#0297133460f53af2eeb17933341186041a62539f"
-  integrity sha512-Lmbfe76xqSb4Xa0LMwxoPO+K+chJat0WAQnkdAkqbYtfLmPbTBbffFV7m5gGxI/tWhneOgWQ9vq1B0HliofemQ==
-  dependencies:
-    clsx "^1.1.1"
-    prop-types "^15.7.2"
 
 "@eslint/eslintrc@^1.2.0":
   version "1.2.0"
@@ -1707,17 +1714,6 @@
   integrity sha512-fQNsKX2TxBmqIGJCSi3tGTO/gZ+eJgWmMJkgDiOfyNaunNaxcklJQFaFogYcFl0qFuaEz1qaXYXboa/bUXVSOQ==
   dependencies:
     "@babel/runtime" "^7.4.4"
-
-"@material-ui/lab@^4.0.0-alpha.60":
-  version "4.0.0-alpha.60"
-  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.60.tgz#5ad203aed5a8569b0f1753945a21a05efa2234d2"
-  integrity sha512-fadlYsPJF+0fx2lRuyqAuJj7hAS1tLDdIEEdov5jlrpb5pp4b+mRDUqQTUxi4inRZHS1bEXpU8QWUhO6xX88aA==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@material-ui/utils" "^4.11.2"
-    clsx "^1.0.4"
-    prop-types "^15.7.2"
-    react-is "^16.8.0 || ^17.0.0"
 
 "@material-ui/styles@^4.11.4":
   version "4.11.4"

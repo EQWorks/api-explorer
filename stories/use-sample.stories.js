@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react' // no need to import `React` once 17
 
-import { ThemeProvider } from '@eqworks/lumen-ui'
 import { Table } from '@eqworks/lumen-table'
 
 import { useSample } from '../src'
@@ -70,12 +69,10 @@ export const WithTable = () => {
   } = useSample(sample)
 
   return (
-    <ThemeProvider>
-      <div>
-        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-        <Table data={data} isBorder />
-      </div>
-    </ThemeProvider>
+    <div>
+      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      <Table data={data} isBorder />
+    </div>
   )
 }
 
