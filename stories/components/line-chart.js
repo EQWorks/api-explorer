@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react' // no need to import `React` once 17
 
 import { PlotlyLineChart as Line } from '@eqworks/chart-system'
+import { DropdownSelect } from '@eqworks/lumen-labs'
+import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
 
 
-const LineChart = ({ data, keys, typedKeys }) => {
+const LineChart = ({ data, typedKeys }) => {
   const [x, setX] = useState(null)
   const [ys, setYs] = useState([])
   useEffect(() => {
@@ -12,61 +14,57 @@ const LineChart = ({ data, keys, typedKeys }) => {
     setYs(typedKeys.number || [])
   }, [typedKeys])
 
+  if (!data.length) {
+    return null
+  }
+
+  const renderXYSelections = () => {
+    const xOptions = typedKeys.string || []
+    const yOptions = [...(typedKeys.number || []), ...(typedKeys.boolean || [])]
+
+    if (!xOptions.length || !yOptions.length) {
+      return null
+    }
+
+    return (
+      <div>
+        <p>Y-axes</p>
+        <div className='mb-3'>
+          <DropdownSelect
+            simple
+            multiSelect
+            data={yOptions}
+            endIcon={<ArrowDown size='md' />}
+            placeholder='Select Y-axes'
+            value={ys}
+            onSelect={setYs}
+            overflow='vertical'
+          />
+        </div>
+        <p>X-axis</p>
+        <div>
+          <DropdownSelect
+            simple
+            data={xOptions}
+            endIcon={<ArrowDown size='md' />}
+            placeholder='Select an X-axis'
+            value={x}
+            onSelect={setX}
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <>
+    <div className='flex flex-row'>
       <div>
-        {data && keys.length > 0 && (
-          <div style={{ height: '90vh' }}>
-            {Object.keys(typedKeys).length > 0 && (
-              <>
-                {typedKeys.string && (
-                  <div>
-                    <label htmlFor="x">X:</label>
-                    <select name="x" value={x} onChange={({ target: { value } }) => setX(value)}>
-                      {typedKeys.string.map(key => (
-                        <option key={key} value={key}>
-                          {key}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                <div>
-                  {[...(typedKeys.number || []), ...(typedKeys.boolean || [])].map(key => (
-                    <span key={key} style={{ margin: '0 5px' }}>
-                      <label htmlFor={`data-${key}`}>{key}:</label>
-                      <input
-                        name={`data-${key}`}
-                        type="checkbox"
-                        checked={ys.includes(key)}
-                        onChange={({ target: { checked } }) => {
-                          if (checked) {
-                            setYs([...ys, key])
-                          } else {
-                            setYs(ys.filter(y => y !== key))
-                          }
-                        }}
-                      />
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
-            <Line data={data} x={x} y={ys} />
-          </div>
-        )}
+        {data && Object.keys(typedKeys).length > 0 && (renderXYSelections())}
       </div>
-      <div>
-        <strong>Raw Data keys:</strong>
-        <pre>
-          <code>{JSON.stringify(keys, null, 2)}</code>
-        </pre>
-        <strong>Parsed keys by data types:</strong>
-        <pre>
-          <code>{JSON.stringify(typedKeys, null, 2)}</code>
-        </pre>
+      <div style={{ height: '85vh' }} className='grow'>
+        <Line data={data} x={x} y={ys} />
       </div>
-    </>
+    </div>
   )
 }
 
