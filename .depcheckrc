@@ -1,0 +1,5 @@
+ignores: [
+    "@storybook/*",
+    "@babel/*",
+    "babel-loader"
+]
