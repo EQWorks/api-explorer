@@ -22,10 +22,6 @@ const LineChart = ({ data, typedKeys }) => {
     const xOptions = typedKeys.string || []
     const yOptions = [...(typedKeys.number || []), ...(typedKeys.boolean || [])]
 
-    if (!xOptions.length || !yOptions.length) {
-      return null
-    }
-
     return (
       <div>
         <p>Y-axes</p>
@@ -39,6 +35,7 @@ const LineChart = ({ data, typedKeys }) => {
             value={ys}
             onSelect={setYs}
             overflow='vertical'
+            disabled={!xOptions.length}
           />
         </div>
         <p>X-axis</p>
@@ -50,6 +47,7 @@ const LineChart = ({ data, typedKeys }) => {
             placeholder='Select an X-axis'
             value={x}
             onSelect={setX}
+            disabled={!xOptions.length}
           />
         </div>
       </div>

@@ -30,7 +30,6 @@ const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
         <Button
           onClick={() => {
             const sample = Object.values(SAMPLES)[Math.floor(Math.random() * Object.values(SAMPLES).length)]
-            console.log(sample)
             setSample(sample)
           }}
           size='lg'
@@ -68,7 +67,7 @@ export const WithLineChart = () => {
   return (
     <div>
       <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+      {data && (<LineChart data={data} keys={keys} typedKeys={typedKeys} />)}
     </div>
   )
 }
