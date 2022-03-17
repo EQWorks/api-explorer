@@ -2,8 +2,12 @@
 import React, { useState } from 'react' // no need to import `React` once 17
 
 import { Table } from '@eqworks/lumen-table'
-import { TextField, DropdownSelect, Button } from '@eqworks/lumen-labs'
+import { DropdownSelect, Button } from '@eqworks/lumen-labs'
 import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
+import AceEditor from 'react-ace'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-tomorrow'
+import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { useSample } from '../src'
 import SAMPLES from './data/samples'
@@ -15,17 +19,24 @@ export default { title: 'API Explorer/useSample' }
 
 const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
   <div>
-    <div>
-      <TextField.Area
-        inputProps={{
-          value: JSON.stringify(sample, null, 2),
-          // onChange: value => setSample(JSON.parse(value)),
+    <div className='mb-3'>
+      <AceEditor
+        placeholder='Paste your sample JSON here'
+        mode='json'
+        theme='tomorrow'
+        name='json-sample'
+        onChange={(value) => { setSample(JSON.parse(value)) }}
+        value={JSON.stringify(sample, null, 2)}
+        setOptions={{
+          enableBasicAutocompletion: false,
+          enableLiveAutocompletion: false,
+          enableSnippets: false,
+          showLineNumbers: false,
+          tabSize: 2,
         }}
-        label='JSON Sample'
-        readOnly
       />
     </div>
-    <div  className='flex flex-row mb-3'>
+    <div className='flex flex-row'>
       <div className='mr-3'>
         <Button
           onClick={() => {
@@ -65,9 +76,13 @@ export const WithLineChart = () => {
   } = useSample(sample)
 
   return (
-    <div>
-      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      {data && (<LineChart data={data} keys={keys} typedKeys={typedKeys} />)}
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      </div>
+      <div>
+        {data && (<LineChart data={data} keys={keys} typedKeys={typedKeys} />)}
+      </div>
     </div>
   )
 }
@@ -82,9 +97,13 @@ export const WithTable = () => {
   } = useSample(sample)
 
   return (
-    <div>
-      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      <Table data={data} isBorder />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      </div>
+      <div>
+        <Table data={data} isBorder />
+      </div>
     </div>
   )
 }
@@ -99,9 +118,13 @@ export const Raw = () => { // raw explorer
   } = useSample(sample)
 
   return (
-    <div>
-      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      <RawDisplay data={data} />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      </div>
+      <div>
+        <RawDisplay data={data} />
+      </div>
     </div>
   )
 }

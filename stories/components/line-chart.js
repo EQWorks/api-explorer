@@ -55,11 +55,12 @@ const LineChart = ({ data, typedKeys }) => {
   }
 
   return (
-    <div className='flex flex-row'>
+    <div className='flex flex-row mb-3'>
       <div>
         {data && Object.keys(typedKeys).length > 0 && (renderXYSelections())}
       </div>
-      <div style={{ height: '85vh' }} className='grow'>
+      {/* h-* tailwind classes don't seem to work */}
+      <div style={{ height: '75vh' }} className='grow'>
         <Line data={data} x={x} y={ys} />
       </div>
     </div>

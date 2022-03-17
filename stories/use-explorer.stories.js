@@ -4,6 +4,10 @@ import React, { useState } from 'react' // no need to import `React` once 17
 import { Table } from '@eqworks/lumen-table'
 import { TextField, DropdownSelect } from '@eqworks/lumen-labs'
 import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
+import AceEditor from 'react-ace'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-tomorrow'
+import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { useExplorer } from '../src'
 import RawDisplay from './components/raw-display'
@@ -39,11 +43,23 @@ const URLControls = ({ url, setURL, paths, path, setPath }) => (
 )
 
 const RawResponse = ({ sample }) => (
-  <TextField.Area
-    inputProps={{ value: JSON.stringify(sample, null, 2) }}
-    label='Raw Response'
-    readOnly
-  />
+  <div>
+    <AceEditor
+      placeholder='Paste your sample JSON here'
+      mode='json'
+      theme='tomorrow'
+      name='json-raw-response'
+      readOnly
+      value={JSON.stringify((sample || []), null, 2)}
+      setOptions={{
+        enableBasicAutocompletion: false,
+        enableLiveAutocompletion: false,
+        enableSnippets: false,
+        showLineNumbers: false,
+        tabSize: 2,
+      }}
+    />
+  </div>
 )
 
 const ErrorResponse = ({ error }) => (
@@ -70,12 +86,12 @@ export const WithLineChart = () => {
   const renderData = () => loading ? (
     <div>Loading...</div>
   ) : (
-    <div>
-      <div>
-        <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <RawResponse sample={sample} />
       </div>
       <div>
-        <RawResponse sample={sample} />
+        <LineChart data={data} keys={keys} typedKeys={typedKeys} />
       </div>
     </div>
   )
@@ -103,12 +119,12 @@ export const WithTable = () => {
   const renderData = () => loading ? (
     <div>Loading...</div>
   ) : (
-    <div>
-      <div>
-        <Table data={data} isBorder />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <RawResponse sample={sample} />
       </div>
       <div>
-        <RawResponse sample={sample} />
+        <Table data={data} isBorder />
       </div>
     </div>
   )
@@ -136,12 +152,12 @@ export const Raw = () => { // raw explorer
   const renderData = () => loading ? (
     <div>Loading...</div>
   ) : (
-    <div>
-      <div>
-        <RawDisplay data={data} />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <RawResponse sample={sample} />
       </div>
       <div>
-        <RawResponse sample={sample} />
+        <RawDisplay data={data} />
       </div>
     </div>
   )
