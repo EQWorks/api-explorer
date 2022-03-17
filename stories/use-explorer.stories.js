@@ -16,7 +16,7 @@ import LineChart from './components/line-chart'
 
 export default { title: 'API Explorer/useExplorer' }
 
-const URLControls = ({ url, setURL, paths, path, setPath }) => (
+const URLControls = ({ url, setURL, paths, path, setPath, loading }) => (
   <div className='flex flex-row mb-3'>
     <div className='mr-3'>
       <TextField
@@ -24,6 +24,7 @@ const URLControls = ({ url, setURL, paths, path, setPath }) => (
         value={url}
         onChange={setURL}
         size='lg'
+        disabled={loading}
       />
     </div>
     <div>
@@ -36,7 +37,7 @@ const URLControls = ({ url, setURL, paths, path, setPath }) => (
         value={path}
         onSelect={setPath}
         size='lg'
-        disabled={paths.length <= 1}
+        disabled={loading || paths.length <= 1}
       />
     </div>
   </div>
@@ -98,7 +99,7 @@ export const WithLineChart = () => {
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
@@ -131,7 +132,7 @@ export const WithTable = () => {
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
@@ -164,7 +165,7 @@ export const Raw = () => { // raw explorer
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
