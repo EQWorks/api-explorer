@@ -5,6 +5,8 @@ import { ThemeProvider } from '@eqworks/lumen-ui'
 import { Table } from '@eqworks/lumen-table'
 
 import { useExplorer } from '../src'
+import RawDisplay from './components/raw-display'
+import LineChart from './components/line-chart'
 
 
 export default { title: 'API Explorer/useExplorer' }
@@ -31,14 +33,54 @@ const URLControls = ({ url, setURL, paths, path, setPath }) => (
 
 const RawResponse = ({ sample }) => (
   <div>
-    <h2>Raw Response</h2>
+    <strong>Raw Response</strong>
     <pre>
       <code>{JSON.stringify(sample, null, 2)}</code>
     </pre>
   </div>
 )
 
-export const WithLumenTable = () => {
+const ErrorResponse = ({ error }) => (
+  <div>
+    Error:
+    <pre><code>{JSON.stringify(error.stack || error.message || String(error), null, 2)}</code></pre>
+  </div>
+)
+
+export const WithLineChart = () => {
+  const [url, setURL] = useState('https://api.coinstats.app/public/v1/coins?skip=0&limit=5&currency=EUR')
+  const {
+    sample,
+    data,
+    paths,
+    path,
+    setPath,
+    keys,
+    typedKeys,
+    loading,
+    error,
+  } = useExplorer({ url })
+
+  if (loading) {
+    return (<div>Loading...</div>)
+  }
+
+  return (
+    <div>
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
+      {error ? (
+        <ErrorResponse error={error} />
+      ) : (
+        <>
+          <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+          <RawResponse sample={sample} />
+        </>
+      )}
+    </div>
+  )
+}
+
+export const WithTable = () => {
   const [url, setURL] = useState('https://api.covid19api.com/summary')
   const {
     sample,
@@ -46,47 +88,52 @@ export const WithLumenTable = () => {
     paths,
     path,
     setPath,
+    loading,
+    error,
   } = useExplorer({ url })
+
+  if (loading) {
+    return (<div>Loading...</div>)
+  }
 
   return (
     <ThemeProvider>
       <div>
         <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-        <div>
-          <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
-          <Table data={data} isBorder />
-        </div>
-        <RawResponse sample={sample} />
+        {error ? (<ErrorResponse error={error} />) : (<Table data={data} isBorder />)}
       </div>
+      <RawResponse sample={sample} />
     </ThemeProvider>
   )
 }
 
 export const Raw = () => { // raw explorer
   const [url, setURL] = useState('https://api.covid19api.com/summary')
-  const [sampleSize, setSampleSize] = useState(2)
   const {
     sample,
     data,
     paths,
     path,
     setPath,
+    loading,
+    error,
   } = useExplorer({ url })
+
+  if (loading) {
+    return (<div>Loading...</div>)
+  }
 
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      <div>
-        <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
-        <div>
-          <label htmlFor="sampleSize">Sample Size:</label>
-          <input name="sampleSize" type="number" value={sampleSize} onChange={({ target: { value } }) => setSampleSize(value)} />
-        </div>
-        <pre>
-          <code>{JSON.stringify((data || []).slice(0, sampleSize), null, 2)}</code>
-        </pre>
-      </div>
-      <RawResponse sample={sample} />
+      {error ? (
+        <ErrorResponse error={error} />
+      ) : (
+        <>
+          <RawDisplay data={data} />
+          <RawResponse sample={sample} />
+        </>
+      )}
     </div>
   )
 }

@@ -6,6 +6,8 @@ import { Table } from '@eqworks/lumen-table'
 
 import { useSample } from '../src'
 import SAMPLES from './data/samples'
+import RawDisplay from './components/raw-display'
+import LineChart from './components/line-chart'
 
 
 export default { title: 'API Explorer/useSample' }
@@ -39,7 +41,26 @@ const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
   </div>
 )
 
-export const WithLumenTable = () => {
+export const WithLineChart = () => {
+  const [sample, setSample] = useState({})
+  const {
+    data,
+    paths,
+    path,
+    setPath,
+    keys,
+    typedKeys,
+  } = useSample(sample)
+
+  return (
+    <div>
+      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+    </div>
+  )
+}
+
+export const WithTable = () => {
   const [sample, setSample] = useState({})
   const {
     data,
@@ -52,10 +73,7 @@ export const WithLumenTable = () => {
     <ThemeProvider>
       <div>
         <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-        <div>
-          <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
-          <Table data={data} isBorder />
-        </div>
+        <Table data={data} isBorder />
       </div>
     </ThemeProvider>
   )
@@ -63,7 +81,6 @@ export const WithLumenTable = () => {
 
 export const Raw = () => { // raw explorer
   const [sample, setSample] = useState({})
-  const [sampleSize, setSampleSize] = useState(2)
   const {
     data,
     paths,
@@ -74,16 +91,7 @@ export const Raw = () => { // raw explorer
   return (
     <div>
       <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      <div>
-        <h2>Array Data Sample (Path: <code>.{path.join('.')}</code>)</h2>
-        <div>
-          <label htmlFor="sampleSize">Sample Size:</label>
-          <input name="sampleSize" type="number" value={sampleSize} onChange={({ target: { value } }) => setSampleSize(value)} />
-        </div>
-        <pre>
-          <code>{JSON.stringify((data || []).slice(0, sampleSize), null, 2)}</code>
-        </pre>
-      </div>
+      <RawDisplay data={data} />
     </div>
   )
 }
