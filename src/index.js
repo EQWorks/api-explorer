@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 const findArrayPaths = (obj) => {
   const paths = []
   const findPaths = (obj, path = []) => {
-    if (Array.isArray(obj) && obj.length > 0) {
+    if (Array.isArray(obj) && obj.length) {
       paths.push(path)
     } else if (typeof obj === 'object') {
       for (const key in obj) {
@@ -49,19 +49,15 @@ export const useSample = (sample) => {
   // set initial tabular data path, react to paths change
   const [path, setPath] = useState([]) // default [] = root path
   useEffect(() => {
-    if (paths && paths.length > 0) {
-      // set first array path as default
-      setPath(paths[0])
-    } else {
-      setPath([])
-    }
+    // set first array path as default
+    setPath(paths?.length ? paths[0] : [])
   }, [paths])
   // find tabular data, react to path or sample change
   const [data, setData] = useState([])
   useEffect(() => {
-    if (path && path.length > 0 && sample) {
+    if (path?.length && sample) {
       setData(getByPath(sample, path))
-    } else if (Array.isArray(sample) && sample.length > 0) {
+    } else if (Array.isArray(sample) && sample.length) {
       setData(sample)
     }
   }, [path, sample]) // in theory this reacts only to path change, while sample shouldn't change
@@ -78,7 +74,7 @@ export const useSample = (sample) => {
   // set parsed keys by inferred value type, react to keys or data change
   const [typedKeys, setTypedKeys] = useState({})
   useEffect(() => {
-    if (keys && keys.length > 0 && data && data.length > 0) {
+    if (keys?.length && data?.length) {
       const parseKeys = {}
       keys.forEach(key => {
         const type = typeof data[0][key]
