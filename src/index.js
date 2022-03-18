@@ -6,7 +6,6 @@ import {
   getByPath,
   buildKeys,
   flattenAsDot,
-  request,
 } from './utils'
 
 // TODO: dissect this hook into keys, data (and paths) aspects?
@@ -18,8 +17,7 @@ export const useSample = (sample) => {
     setData([])
     if (typeof sample === 'object' && sample !== null && !Array.isArray(sample)) {
       // search for nonempty Arrays in sample Object
-      const paths = findArrayPaths(sample)
-      setPaths(paths)
+      setPaths(findArrayPaths(sample))
     } else {
       setPaths([])
     }
@@ -79,6 +77,8 @@ export const useSample = (sample) => {
     setFlatten,
   }
 }
+
+const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
 
 export const useExplorer = ({ url, fetchOptions }) => {
   // fetch sample data from given API endpoint

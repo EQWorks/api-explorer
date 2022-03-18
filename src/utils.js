@@ -45,6 +45,3 @@ export const flattenAsDot = (obj) => {
   flatten(obj)
   return flattened
 }
-
-// TODO: detect and support other content types
-export const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
