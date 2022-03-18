@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react' // no need to import `React` once 17
 
 import { PlotlyLineChart as Line } from '@eqworks/chart-system'
-import { DropdownSelect } from '@eqworks/lumen-labs'
+import { Button, DropdownSelect } from '@eqworks/lumen-labs'
 import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
 
 
@@ -25,6 +25,11 @@ const LineChart = ({ data, typedKeys }) => {
     return (
       <div>
         <p>Y-axes</p>
+        {ys.length > 0 && (
+          <Button size='sm' onClick={() => setYs([])}>
+            unselect all
+          </Button>
+        )}
         <div className='mb-3'>
           <DropdownSelect
             simple

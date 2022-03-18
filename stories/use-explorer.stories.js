@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react' // no need to import `React` once 17
+import React, { useReducer } from 'react' // no need to import `React` once 17
 
 import { Table } from '@eqworks/lumen-table'
 import { TextField, DropdownSelect, SwitchRect } from '@eqworks/lumen-labs'
@@ -79,8 +79,49 @@ const ErrorResponse = ({ error }) => (
   </div>
 )
 
+const getDefaultOpts = () => ({
+  headers: {
+    'Accept': 'application/json',
+  },
+})
+
+const fetchReducer = (state, action) => {
+  if (action.type === 'url') {
+    const url = action.payload
+    let opts = getDefaultOpts()
+    if (url?.includes('api.eqworks.io') || url?.includes('api.locus.place')) {
+      const token = window.localStorage.getItem('eq-api-jwt')
+      if (token) {
+        opts = {
+          ...state?.fetchOptions,
+          headers: {
+            ...state?.fetchOptions?.headers,
+            'eq-api-jwt': token,
+          },
+        }
+      }
+    }
+    return { ...state, url, fetchOptions: opts }
+  }
+  // other generic reducer actions
+  return {
+    ...state,
+    [action.type]: action.payload,
+  }
+}
+
+const useURL = (url = 'https://api.covid19api.com/summary') => {
+  // using reducer here to ensure no leaky fetchOptions on url change
+  const [explorerParams, dispatch] = useReducer(fetchReducer, {
+    url,
+    fetchOptions: getDefaultOpts(),
+  })
+  const setURL = (payload) => dispatch({ type: 'url', payload })
+  return { setURL, explorerParams }
+}
+
 export const WithLineChart = () => {
-  const [url, setURL] = useState('https://api.coinstats.app/public/v1/coins?skip=0&limit=5&currency=EUR')
+  const { setURL, explorerParams } = useURL('https://api.coinstats.app/public/v1/coins?skip=0&limit=5&currency=EUR')
   const {
     sample,
     data,
@@ -93,7 +134,7 @@ export const WithLineChart = () => {
     error,
     flatten,
     setFlatten,
-  } = useExplorer({ url })
+  } = useExplorer(explorerParams)
 
   const renderData = () => loading ? (
     <div>Loading...</div>
@@ -110,14 +151,14 @@ export const WithLineChart = () => {
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
+      <URLControls url={explorerParams.url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
 }
 
 export const WithTable = () => {
-  const [url, setURL] = useState('https://api.covid19api.com/summary')
+  const { setURL, explorerParams} = useURL()
   const {
     sample,
     data,
@@ -128,7 +169,7 @@ export const WithTable = () => {
     error,
     flatten,
     setFlatten,
-  } = useExplorer({ url })
+  } = useExplorer(explorerParams)
 
   const renderData = () => loading ? (
     <div>Loading...</div>
@@ -145,14 +186,14 @@ export const WithTable = () => {
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
+      <URLControls url={explorerParams.url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
 }
 
 export const Raw = () => { // raw explorer
-  const [url, setURL] = useState('https://api.covid19api.com/summary')
+  const { setURL, explorerParams} = useURL()
   const {
     sample,
     data,
@@ -163,7 +204,7 @@ export const Raw = () => { // raw explorer
     error,
     flatten,
     setFlatten,
-  } = useExplorer({ url })
+  } = useExplorer(explorerParams)
 
   const renderData = () => loading ? (
     <div>Loading...</div>
@@ -180,7 +221,7 @@ export const Raw = () => { // raw explorer
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
+      <URLControls url={explorerParams.url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
