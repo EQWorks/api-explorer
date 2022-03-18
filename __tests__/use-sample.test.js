@@ -77,6 +77,22 @@ describe('useSample', () => {
   })
 
   test.each([
+    [['a'], {}, []],
+    [['a'], { a: 1 }, 1],
+    [['a'], { a: [1, 2, 3] }, [1, 2, 3]],
+    [['a', 'b', 'c'], { a: { b: { c: [1, 2, 3] } } }, [1, 2, 3]],
+    [['d', 'e', 'f'], { a: { b: { c: [1, 2, 3] } }, d: { e: { f: [4, 5, 6] } } }, [4, 5, 6]],
+    [['a'], [], []],
+    [['a'], [1, 2, 3], [1, 2, 3]],
+  ])('setPath(%j): input=%j would yield data=%j', (path, sample, data) => {
+    const { result } = renderHook(() => useSample(sample))
+    act(() => {
+      result.current.setPath(path)
+    })
+    expect(result.current.data).toStrictEqual(data)
+  })
+
+  test.each([
     [{}, []],
     [{ a: 1 }, []],
     [{ a: [{ x: 1, y: 2 }, { x: 3, y: 5 }] }, [{ x: 1, y: 2 }, { x: 3, y: 5 }]],

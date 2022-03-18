@@ -35,7 +35,7 @@ export const useSample = (sample) => {
     if (Array.isArray(sample) && sample.length) { // sample is an array
       data = sample
     } else if (path?.length && sample && !isPrimitive(sample)) { // sample is an object
-      data = getByPath(sample, path)
+      data = getByPath(sample, path) || []
     }
     setData(flatten ? data.map(flattenAsDot) : data)
   }, [path, sample, flatten]) // in theory this reacts only to path change, while sample shouldn't change
