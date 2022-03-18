@@ -2,7 +2,7 @@
 import React, { useState } from 'react' // no need to import `React` once 17
 
 import { Table } from '@eqworks/lumen-table'
-import { TextField, DropdownSelect } from '@eqworks/lumen-labs'
+import { TextField, DropdownSelect, SwitchRect } from '@eqworks/lumen-labs'
 import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-json'
@@ -16,7 +16,7 @@ import LineChart from './components/line-chart'
 
 export default { title: 'API Explorer/useExplorer' }
 
-const URLControls = ({ url, setURL, paths, path, setPath, loading }) => (
+const URLControls = ({ url, setURL, paths, path, setPath, flatten, setFlatten, loading }) => (
   <div className='flex flex-row mb-3'>
     <div className='mr-3'>
       <TextField
@@ -27,7 +27,7 @@ const URLControls = ({ url, setURL, paths, path, setPath, loading }) => (
         disabled={loading}
       />
     </div>
-    <div>
+    <div className='mr-3'>
       <p>Paths</p> {/* hack to emulate label space */}
       <DropdownSelect
         simple
@@ -38,6 +38,15 @@ const URLControls = ({ url, setURL, paths, path, setPath, loading }) => (
         onSelect={setPath}
         size='lg'
         disabled={loading || paths.length <= 1}
+      />
+    </div>
+    <div>
+      <p>&nbsp;</p>
+      <SwitchRect
+        id='flatten'
+        label='Flatten'
+        checked={flatten}
+        onChange={({ target: { checked } }) => { setFlatten(checked) }}
       />
     </div>
   </div>
@@ -82,6 +91,8 @@ export const WithLineChart = () => {
     typedKeys,
     loading,
     error,
+    flatten,
+    setFlatten,
   } = useExplorer({ url })
 
   const renderData = () => loading ? (
@@ -99,7 +110,7 @@ export const WithLineChart = () => {
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} loading={loading} />
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
@@ -115,6 +126,8 @@ export const WithTable = () => {
     setPath,
     loading,
     error,
+    flatten,
+    setFlatten,
   } = useExplorer({ url })
 
   const renderData = () => loading ? (
@@ -132,7 +145,7 @@ export const WithTable = () => {
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} loading={loading} />
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
@@ -148,6 +161,8 @@ export const Raw = () => { // raw explorer
     setPath,
     loading,
     error,
+    flatten,
+    setFlatten,
   } = useExplorer({ url })
 
   const renderData = () => loading ? (
@@ -165,7 +180,7 @@ export const Raw = () => { // raw explorer
 
   return (
     <div>
-      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} loading={loading} />
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
