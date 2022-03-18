@@ -1,45 +1,23 @@
 import { useState, useEffect } from 'react'
 
+import {
+  isPrimitive,
+  findArrayPaths,
+  getByPath,
+  buildKeys,
+  flattenAsDot,
+  request,
+} from './utils'
 
-const findArrayPaths = (obj) => {
-  const paths = []
-  const findPaths = (obj, path = []) => {
-    if (Array.isArray(obj) && obj.length) {
-      paths.push(path)
-    } else if (typeof obj === 'object') {
-      for (const key in obj) {
-        findPaths(obj[key], [...path, key])
-      }
-    }
-  }
-  findPaths(obj)
-  return paths
-}
-
-const getByPath = (obj, path) => path.reduce((acc, key) => acc[key], obj)
-
-const isPrimitive = (value) => typeof value !== 'object'
-
-const buildKeys = (data) => {
-  if (!Array.isArray(data) || data.length === 0 || isPrimitive(data[0]) || !data[0]) {
-    return []
-  }
-  const keys = []
-  Object.entries((data[0] || {})).forEach(([key, value]) => {
-    if (isPrimitive(value)) {
-      keys.push(key)
-    }
-  })
-  return keys
-}
-
+// TODO: dissect this hook into keys, data (and paths) aspects?
 export const useSample = (sample) => {
   // set possible tabular (array) data paths, react to given sample
+  const [data, setData] = useState([])
   const [paths, setPaths] = useState([])
   useEffect(() => {
     setData([])
     if (typeof sample === 'object' && sample !== null && !Array.isArray(sample)) {
-      // search for non-empty Arrays in sample Object
+      // search for nonempty Arrays in sample Object
       const paths = findArrayPaths(sample)
       setPaths(paths)
     } else {
@@ -52,15 +30,17 @@ export const useSample = (sample) => {
     // set first array path as default
     setPath(paths?.length ? paths[0] : [])
   }, [paths])
-  // find tabular data, react to path or sample change
-  const [data, setData] = useState([])
+  // find tabular data, react to path, sample, or flatten change
+  const [flatten, setFlatten] = useState(false)
   useEffect(() => {
-    if (path?.length && sample) {
-      setData(getByPath(sample, path))
-    } else if (Array.isArray(sample) && sample.length) {
-      setData(sample)
+    let data = []
+    if (Array.isArray(sample) && sample.length) { // sample is an array
+      data = sample
+    } else if (path?.length && sample && !isPrimitive(sample)) { // sample is an object
+      data = getByPath(sample, path)
     }
-  }, [path, sample]) // in theory this reacts only to path change, while sample shouldn't change
+    setData(flatten ? data.map(flattenAsDot) : data)
+  }, [path, sample, flatten]) // in theory this reacts only to path change, while sample shouldn't change
   // find data keys, react to data change
   const [keys, setKeys] = useState([])
   useEffect(() => {
@@ -95,11 +75,10 @@ export const useSample = (sample) => {
     setPath,
     keys, // raw data keys
     typedKeys, // parsed keys by inferred value types
+    flatten,
+    setFlatten,
   }
 }
-
-// TODO: detect and support other content types
-const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
 
 export const useExplorer = ({ url, fetchOptions }) => {
   // fetch sample data from given API endpoint
