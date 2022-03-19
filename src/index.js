@@ -42,12 +42,7 @@ export const useSample = (sample) => {
   // find data keys, react to data change
   const [keys, setKeys] = useState([])
   useEffect(() => {
-    try {
-      setKeys(buildKeys(data))
-    } catch(e) {
-      // TODO: handle error
-      setKeys([])
-    }
+    setKeys(buildKeys(data))
   }, [data])
   // set parsed keys by inferred value type, react to keys or data change
   const [typedKeys, setTypedKeys] = useState({})
@@ -80,6 +75,7 @@ export const useSample = (sample) => {
 
 const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
 
+// Note: url and fetchOptions should be managed by a reducer (or similarly centralized store)
 export const useExplorer = ({ url, fetchOptions }) => {
   // fetch sample data from given API endpoint
   const [sample, setSample] = useState(null)
@@ -87,7 +83,6 @@ export const useExplorer = ({ url, fetchOptions }) => {
   const [error, setError] = useState(null)
   useEffect(() => {
     if (url) {
-      // TODO: handle errors
       setLoading(true)
       setError(null)
       setSample(null)

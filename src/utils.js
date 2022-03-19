@@ -21,13 +21,10 @@ export const buildKeys = (data) => {
   if (!Array.isArray(data) || data.length === 0 || isPrimitive(data[0]) || !data[0]) {
     return []
   }
-  const keys = []
-  Object.entries((data[0] || {})).forEach(([key, value]) => {
-    if (isPrimitive(value)) {
-      keys.push(key)
-    }
-  })
-  return keys
+  // TODO: sample more entries to find common keys
+  return Object.entries(data[0])
+    .filter(([, value]) => isPrimitive(value))
+    .map(([key]) => key)
 }
 
 // flatten nested objects and arrays as dot-separated root keys
