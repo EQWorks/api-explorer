@@ -51,3 +51,21 @@ jobs:
           node-version: 14.x
 
       - run: npx @eqworks/commit-watch -b ${{ github.event.pull_request.base.sha }} -h ${{ github.event.pull_request.head.sha }} -v
+
+  release:
+    name: Trigger a release
+    runs-on: ubuntu-latest
+    needs: [checks, 'commit-watch']
+    if: contains(github.event_name, 'push')
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create tag
+        run: npx @eqworks/release tag --github -v
+        env:
+          GITHUB_OWNER: EQWorks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

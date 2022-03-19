@@ -1,0 +1,41 @@
+name: Publish NPM package - alpha tag
+
+on:
+  push:
+    tags:
+      - 'v*-alpha*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout designated tagged commit
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+      - run: yarn install
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          registry-url: https://registry.npmjs.org/
+          scope: '@eqworks'
+      - run: yarn publish --tag alpha --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.CD_NPM_TOKEN_PUBLISH }}
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          registry-url: https://npm.pkg.github.com/
+          scope: '@eqworks'
+          always-auth: true
+      # hack to work around local .npmrc
+      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > .npmrc
+      - run: yarn publish --tag alpha --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # this is the normal way (without local .npmrc)
