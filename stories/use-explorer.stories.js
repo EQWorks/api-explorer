@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useReducer } from 'react' // no need to import `React` once 17
+import React, { useReducer, useState } from 'react' // no need to import `React` once 17
 
 import { Table } from '@eqworks/lumen-table'
 import { TextField, DropdownSelect, SwitchRect } from '@eqworks/lumen-labs'
@@ -223,6 +223,86 @@ export const Raw = () => { // raw explorer
     <div>
       <URLControls url={explorerParams.url} setURL={setURL} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} loading={loading} />
       {error ? (<ErrorResponse error={error} />) : renderData()}
+    </div>
+  )
+}
+
+export const Minimal = () => { // minimal explorer
+  const [url, setURL] = useState('https://api.covid19api.com/summary')
+  const {
+    loading, // API is loading
+    error, // API responds error
+    sample, // API response sample
+    data, // inferred tabular data (if any)
+    paths, // inferred tabular data paths (if any)
+    path, // selected tabular data path
+    setPath, // setter for tabular data path
+    flatten, // flatten nested Objects and Arrays
+    setFlatten, // setter for flatten
+    keys, // data row keys
+    typedKeys, // data row keys with type information
+  } = useExplorer({ url })
+
+  const renderData = () => loading ? (
+    <div>Loading...</div>
+  ) : (
+    <div>
+      <div>
+        <strong>Data keys</strong>
+        <pre>{JSON.stringify(keys)}</pre>
+        <strong>Typed data keys</strong>
+        <pre>{JSON.stringify(typedKeys)}</pre>
+      </div>
+      <div>
+        <strong>Inferred tabular data at path <small>(.{path})</small></strong>
+        <pre style={{ overflowY: 'scroll', height: '35vh' }}>{JSON.stringify(data, null, 2)}</pre>
+      </div>
+      <div>
+        <strong>Raw response sample</strong>
+        <pre style={{ overflowY: 'scroll', height: '35vh' }}>{JSON.stringify(sample, null, 2)}</pre>
+      </div>
+    </div>
+  )
+
+  return (
+    <div>
+      <div>
+        <label>
+          URL:&nbsp;
+          <input
+            value={url}
+            onChange={(e) => setURL(e.target.value)}
+            placeholder="URL"
+            disabled={loading}
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          Tabular data path
+          <select value={path} onChange={(e) => setPath(e.target.value)}>
+            {paths.map((path) => (
+              <option key={path} value={path}>{path}</option>
+            ))}
+          </select>
+        </label>
+        &nbsp;
+        <label>
+          <input
+            type="checkbox"
+            checked={flatten}
+            onChange={(e) => setFlatten(e.target.checked)}
+          />
+          &nbsp;
+          Flatten nested Objects and Arrays
+        </label>
+      </div>
+      {error ? (
+        <div>
+          Error:
+          <pre>{JSON.stringify(error.stack || error.message || String(error), null, 2)}</pre>
+        </div>
+      ) : renderData()}
     </div>
   )
 }
