@@ -1,8 +1,13 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react' // no need to import `React` once 17
 
-import { ThemeProvider } from '@eqworks/lumen-ui'
 import { Table } from '@eqworks/lumen-table'
+import { TextField, DropdownSelect } from '@eqworks/lumen-labs'
+import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
+import AceEditor from 'react-ace'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-tomorrow'
+import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { useExplorer } from '../src'
 import RawDisplay from './components/raw-display'
@@ -12,31 +17,48 @@ import LineChart from './components/line-chart'
 export default { title: 'API Explorer/useExplorer' }
 
 const URLControls = ({ url, setURL, paths, path, setPath }) => (
-  <div>
-    <label htmlFor="url">Explore:</label>
-    <input name="url" type="text" value={url} onChange={({ target: { value } }) => setURL(value)} />
-    &nbsp;
-    {paths.length > 0 && (
-      <>
-        <label htmlFor="paths">Paths:</label>
-        <select name="paths" value={path} onChange={({ target: { value } }) => setPath(value)}>
-          {paths.map(path => (
-            <option key={path.join('.')} value={path}>
-              .{path.join('.')}
-            </option>
-          ))}
-        </select>
-      </>
-    )}
+  <div className='flex flex-row mb-3'>
+    <div className='mr-3'>
+      <TextField
+        label='Explore API'
+        value={url}
+        onChange={setURL}
+        size='lg'
+      />
+    </div>
+    <div>
+      <p>Paths</p> {/* hack to emulate label space */}
+      <DropdownSelect
+        simple
+        data={paths}
+        endIcon={<ArrowDown size='md' />}
+        placeholder='Select a path'
+        value={path}
+        onSelect={setPath}
+        size='lg'
+        disabled={paths.length <= 1}
+      />
+    </div>
   </div>
 )
 
 const RawResponse = ({ sample }) => (
   <div>
-    <strong>Raw Response</strong>
-    <pre>
-      <code>{JSON.stringify(sample, null, 2)}</code>
-    </pre>
+    <AceEditor
+      placeholder='Paste your sample JSON here'
+      mode='json'
+      theme='tomorrow'
+      name='json-raw-response'
+      readOnly
+      value={JSON.stringify((sample || []), null, 2)}
+      setOptions={{
+        enableBasicAutocompletion: false,
+        enableLiveAutocompletion: false,
+        enableSnippets: false,
+        showLineNumbers: false,
+        tabSize: 2,
+      }}
+    />
   </div>
 )
 
@@ -61,21 +83,23 @@ export const WithLineChart = () => {
     error,
   } = useExplorer({ url })
 
-  if (loading) {
-    return (<div>Loading...</div>)
-  }
+  const renderData = () => loading ? (
+    <div>Loading...</div>
+  ) : (
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <RawResponse sample={sample} />
+      </div>
+      <div>
+        <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+      </div>
+    </div>
+  )
 
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      {error ? (
-        <ErrorResponse error={error} />
-      ) : (
-        <>
-          <LineChart data={data} keys={keys} typedKeys={typedKeys} />
-          <RawResponse sample={sample} />
-        </>
-      )}
+      {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
 }
@@ -92,18 +116,24 @@ export const WithTable = () => {
     error,
   } = useExplorer({ url })
 
-  if (loading) {
-    return (<div>Loading...</div>)
-  }
+  const renderData = () => loading ? (
+    <div>Loading...</div>
+  ) : (
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <RawResponse sample={sample} />
+      </div>
+      <div>
+        <Table data={data} isBorder />
+      </div>
+    </div>
+  )
 
   return (
-    <ThemeProvider>
-      <div>
-        <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-        {error ? (<ErrorResponse error={error} />) : (<Table data={data} isBorder />)}
-      </div>
-      <RawResponse sample={sample} />
-    </ThemeProvider>
+    <div>
+      <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
+      {error ? (<ErrorResponse error={error} />) : renderData()}
+    </div>
   )
 }
 
@@ -119,21 +149,23 @@ export const Raw = () => { // raw explorer
     error,
   } = useExplorer({ url })
 
-  if (loading) {
-    return (<div>Loading...</div>)
-  }
+  const renderData = () => loading ? (
+    <div>Loading...</div>
+  ) : (
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <RawResponse sample={sample} />
+      </div>
+      <div>
+        <RawDisplay data={data} />
+      </div>
+    </div>
+  )
 
   return (
     <div>
       <URLControls url={url} setURL={setURL} paths={paths} path={path} setPath={setPath} />
-      {error ? (
-        <ErrorResponse error={error} />
-      ) : (
-        <>
-          <RawDisplay data={data} />
-          <RawResponse sample={sample} />
-        </>
-      )}
+      {error ? (<ErrorResponse error={error} />) : renderData()}
     </div>
   )
 }

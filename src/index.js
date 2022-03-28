@@ -21,7 +21,7 @@ const getByPath = (obj, path) => path.reduce((acc, key) => acc[key], obj)
 const isPrimitive = (value) => typeof value !== 'object'
 
 const buildKeys = (data) => {
-  if (!Array.isArray(data) || data.length === 0 || typeof data[0] !== 'object' || !data[0]) {
+  if (!Array.isArray(data) || data.length === 0 || isPrimitive(data[0]) || !data[0]) {
     return []
   }
   const keys = []

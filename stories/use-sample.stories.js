@@ -1,8 +1,13 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react' // no need to import `React` once 17
 
-import { ThemeProvider } from '@eqworks/lumen-ui'
 import { Table } from '@eqworks/lumen-table'
+import { DropdownSelect, Button } from '@eqworks/lumen-labs'
+import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
+import AceEditor from 'react-ace'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-tomorrow'
+import 'ace-builds/src-noconflict/ext-language_tools'
 
 import { useSample } from '../src'
 import SAMPLES from './data/samples'
@@ -14,30 +19,48 @@ export default { title: 'API Explorer/useSample' }
 
 const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
   <div>
-    <textarea name="sample" value={JSON.stringify(sample, null, 2)} onChange={({ target: { value } }) => setSample(JSON.parse(value))} />
-    &nbsp;
-    <button
-      onClick={() => {
-        const sample = Object.values(SAMPLES)[Math.floor(Math.random() * Object.values(SAMPLES).length)]
-        console.log(sample)
-        setSample(sample)
-      }}
-    >
-      Load random sample
-    </button>
-    &nbsp;
-    {paths.length > 0 && (
-      <>
-        <label htmlFor="paths">Paths:</label>
-        <select name="paths" value={path} onChange={({ target: { value } }) => setPath(value)}>
-          {paths.map(path => (
-            <option key={path.join('.')} value={path}>
-              .{path.join('.')}
-            </option>
-          ))}
-        </select>
-      </>
-    )}
+    <div className='mb-3'>
+      <AceEditor
+        placeholder='Paste your sample JSON here'
+        mode='json'
+        theme='tomorrow'
+        name='json-sample'
+        onChange={(value) => { setSample(JSON.parse(value)) }}
+        value={JSON.stringify(sample, null, 2)}
+        setOptions={{
+          enableBasicAutocompletion: false,
+          enableLiveAutocompletion: false,
+          enableSnippets: false,
+          showLineNumbers: false,
+          tabSize: 2,
+        }}
+      />
+    </div>
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <Button
+          onClick={() => {
+            const sample = Object.values(SAMPLES)[Math.floor(Math.random() * Object.values(SAMPLES).length)]
+            setSample(sample)
+          }}
+          size='lg'
+        >
+          Load random sample
+        </Button>
+      </div>
+      <div>
+        <DropdownSelect
+          simple
+          data={paths}
+          endIcon={<ArrowDown size='md' />}
+          placeholder='Select a path'
+          value={path}
+          onSelect={setPath}
+          size='lg'
+          disabled={paths.length <= 1}
+        />
+      </div>
+    </div>
   </div>
 )
 
@@ -53,9 +76,13 @@ export const WithLineChart = () => {
   } = useSample(sample)
 
   return (
-    <div>
-      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      <LineChart data={data} keys={keys} typedKeys={typedKeys} />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      </div>
+      <div>
+        {data && (<LineChart data={data} keys={keys} typedKeys={typedKeys} />)}
+      </div>
     </div>
   )
 }
@@ -70,12 +97,14 @@ export const WithTable = () => {
   } = useSample(sample)
 
   return (
-    <ThemeProvider>
-      <div>
+    <div className='flex flex-row'>
+      <div className='mr-3'>
         <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      </div>
+      <div>
         <Table data={data} isBorder />
       </div>
-    </ThemeProvider>
+    </div>
   )
 }
 
@@ -89,9 +118,13 @@ export const Raw = () => { // raw explorer
   } = useSample(sample)
 
   return (
-    <div>
-      <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
-      <RawDisplay data={data} />
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+      </div>
+      <div>
+        <RawDisplay data={data} />
+      </div>
     </div>
   )
 }
