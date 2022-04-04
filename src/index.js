@@ -77,7 +77,7 @@ export const useSample = (sample, {
 const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
 
 // Note: url and fetchOptions should be managed by a reducer (or similarly centralized store)
-export const useExplorer = ({ url, fetchOptions }) => {
+export const useExplorer = ({ url, fetchOptions }, useSampleOptions = {}) => {
   // fetch sample data from given API endpoint
   const [sample, setSample] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -95,7 +95,7 @@ export const useExplorer = ({ url, fetchOptions }) => {
   }, [url, fetchOptions])
 
   return {
-    ...useSample(sample),
+    ...useSample(sample, useSampleOptions),
     loading,
     error,
   }
