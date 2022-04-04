@@ -17,6 +17,9 @@ yarn add @eqworks/api-explorer
 With built-in `fetch` based API client, you can use `useExplorer` hook to explore arbitrary API endpoints with a simple React component like this:
 
 ```jsx
+import React from 'react'
+import { useExplorer, utils } from '@eqworks/api-explorer'
+
 export const Minimal = () => { // minimal explorer
   const [url, setURL] = useState('https://api.covid19api.com/summary')
   const {
@@ -31,7 +34,13 @@ export const Minimal = () => { // minimal explorer
     setFlatten, // setter for flatten
     keys, // data row keys
     typedKeys, // data row keys with type information
-  } = useExplorer({ url })
+  } = useExplorer({ url }, {
+    // optional overridables, values shown below are defaults
+    findPaths: utils.findArrayPaths // find tabular/array data paths, (obj) => [['path', 'to', 'data'], ...]
+    buildKeys: utils.firstRowKeys, // find data keys, (dataArray) => ['key1', 'key2', ...]
+    buildTypedKeys: utils.buildJSTypedKeys, // group keys by designated types, ({ keys, dataArray }) => ({ type: [keys] })
+    flattenNested: utils.flattenAsDot, // flatten nested Arrays and Objects, (obj) =>  { 'flattened.key': value, ... }
+  })
 
   const renderData = () => loading ? (
     <div>Loading...</div>
@@ -117,7 +126,13 @@ const SampleExplorer = ({ sample }) => {
     setFlatten,
     keys,
     typedKeys,
-  } = useSample(sample)
+  } = useSample(sample, {
+    // optional overridables, values shown below are defaults
+    findPaths: utils.findArrayPaths // find tabular/array data paths, (obj) => [['path', 'to', 'data'], ...]
+    buildKeys: utils.firstRowKeys, // find data keys, (dataArray) => ['key1', 'key2', ...]
+    buildTypedKeys: utils.buildJSTypedKeys, // group keys by designated types, ({ keys, dataArray }) => ({ type: [keys] })
+    flattenNested: utils.flattenAsDot, // flatten nested Arrays and Objects, (obj) =>  { 'flattened.key': value, ... }
+  })
 
   return (...)
 }
