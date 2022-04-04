@@ -10,6 +10,8 @@ import {
   flattenAsDot,
 } from './utils'
 
+export * as utils from './utils'
+
 // TODO: dissect this hook into keys, data (and paths) aspects?
 export const useSample = (sample, {
   findPaths = findArrayPaths, // expect return to be array of arrays (paths)
