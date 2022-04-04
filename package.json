@@ -1,14 +1,21 @@
 {
   "name": "@eqworks/api-explorer",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "Headless React library for arbitrary API endpoints exploration",
   "main": "dist/index.js",
   "source": "src/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "lint": "eslint src/ stories/ __tests__/"
+    "lint": "eslint src/ stories/ __tests__/",
+    "build": "babel src --out-dir dist --copy-files",
+    "prepublishOnly": "yarn lint && yarn test && yarn build"
   },
   "keywords": [
     "react",
@@ -19,6 +26,7 @@
   "author": "dev@eqworks.com",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
