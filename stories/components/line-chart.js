@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react' // no need to import `React` once 17
 
 import { PlotlyLineChart as Line } from '@eqworks/chart-system'
-import { DropdownSelect } from '@eqworks/lumen-labs'
+import { Button, DropdownSelect } from '@eqworks/lumen-labs'
 import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
 
 
@@ -25,6 +25,11 @@ const LineChart = ({ data, typedKeys }) => {
     return (
       <div>
         <p>Y-axes</p>
+        {ys.length > 0 && (
+          <Button size='sm' onClick={() => setYs([])}>
+            unselect all
+          </Button>
+        )}
         <div className='mb-3'>
           <DropdownSelect
             simple
@@ -55,12 +60,12 @@ const LineChart = ({ data, typedKeys }) => {
   }
 
   return (
-    <div className='flex flex-row mb-3'>
+    <div className='flex flex-row'>
       <div>
         {data && Object.keys(typedKeys).length > 0 && (renderXYSelections())}
       </div>
-      {/* h-* tailwind classes don't seem to work */}
-      <div style={{ height: '75vh' }} className='grow'>
+      {/* TODO: tailwind classes for w/h don't seem to work */}
+      <div style={{ height: '75vh', width: '50vw' }}>
         <Line data={data} x={x} y={ys} />
       </div>
     </div>

@@ -1,6 +1,6 @@
 {
   "name": "@eqworks/api-explorer",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.0",
   "description": "Headless React library for arbitrary API endpoints exploration",
   "main": "dist/index.js",
   "source": "src/index.js",
@@ -8,7 +8,7 @@
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "lint": "eslint src/ stories/"
+    "lint": "eslint src/ stories/ __tests__/"
   },
   "keywords": [
     "react",

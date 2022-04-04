@@ -2,7 +2,7 @@
 import React, { useState } from 'react' // no need to import `React` once 17
 
 import { Table } from '@eqworks/lumen-table'
-import { DropdownSelect, Button } from '@eqworks/lumen-labs'
+import { DropdownSelect, Button, SwitchRect } from '@eqworks/lumen-labs'
 import { ArrowDown } from '@eqworks/lumen-labs/dist/icons'
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-json'
@@ -17,7 +17,7 @@ import LineChart from './components/line-chart'
 
 export default { title: 'API Explorer/useSample' }
 
-const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
+const SampleControls = ({ sample, setSample, paths, path, setPath, flatten, setFlatten }) => (
   <div>
     <div className='mb-3'>
       <AceEditor
@@ -45,10 +45,10 @@ const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
           }}
           size='lg'
         >
-          Load random sample
+          Random sample
         </Button>
       </div>
-      <div>
+      <div className='mr-3'>
         <DropdownSelect
           simple
           data={paths}
@@ -58,6 +58,14 @@ const SampleControls = ({ sample, setSample, paths, path, setPath }) => (
           onSelect={setPath}
           size='lg'
           disabled={paths.length <= 1}
+        />
+      </div>
+      <div>
+        <SwitchRect
+          id='flatten'
+          label='Flatten'
+          checked={flatten}
+          onChange={({ target: { checked } }) => { setFlatten(checked) }}
         />
       </div>
     </div>
@@ -73,12 +81,14 @@ export const WithLineChart = () => {
     setPath,
     keys,
     typedKeys,
+    flatten,
+    setFlatten,
   } = useSample(sample)
 
   return (
     <div className='flex flex-row'>
       <div className='mr-3'>
-        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} />
       </div>
       <div>
         {data && (<LineChart data={data} keys={keys} typedKeys={typedKeys} />)}
@@ -94,12 +104,14 @@ export const WithTable = () => {
     paths,
     path,
     setPath,
+    flatten,
+    setFlatten,
   } = useSample(sample)
 
   return (
     <div className='flex flex-row'>
       <div className='mr-3'>
-        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} />
       </div>
       <div>
         <Table data={data} isBorder />
@@ -115,12 +127,14 @@ export const Raw = () => { // raw explorer
     paths,
     path,
     setPath,
+    flatten,
+    setFlatten,
   } = useSample(sample)
 
   return (
     <div className='flex flex-row'>
       <div className='mr-3'>
-        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} />
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} />
       </div>
       <div>
         <RawDisplay data={data} />
