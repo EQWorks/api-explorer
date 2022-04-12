@@ -2,14 +2,23 @@ import { useState, useEffect } from 'react'
 
 import {
   isPrimitive,
-  findArrayPaths,
   getByPath,
-  buildKeys,
+  // pluggable utils
+  findArrayPaths,
+  firstRowKeys,
+  buildJSTypedKeys,
   flattenAsDot,
 } from './utils'
 
+export * as utils from './utils'
+
 // TODO: dissect this hook into keys, data (and paths) aspects?
-export const useSample = (sample) => {
+export const useSample = (sample, {
+  findPaths = findArrayPaths, // expect return to be array of arrays (paths)
+  buildKeys = firstRowKeys, // expect return to be array of keys
+  buildTypedKeys = buildJSTypedKeys, // expect return to be object, { type: [keys] }
+  flattenNested = flattenAsDot, // expect return to be object
+} = {}) => {
   // set possible tabular (array) data paths, react to given sample
   const [data, setData] = useState([])
   const [paths, setPaths] = useState([])
@@ -17,7 +26,7 @@ export const useSample = (sample) => {
     setData([])
     if (typeof sample === 'object' && sample !== null && !Array.isArray(sample)) {
       // search for nonempty Arrays in sample Object
-      setPaths(findArrayPaths(sample))
+      setPaths(findPaths(sample))
     } else {
       setPaths([])
     }
@@ -37,7 +46,7 @@ export const useSample = (sample) => {
     } else if (path?.length && sample && !isPrimitive(sample)) { // sample is an object
       data = getByPath(sample, path) || []
     }
-    setData(flatten ? data.map(flattenAsDot) : data)
+    setData(flatten ? data.map(flattenNested) : data)
   }, [path, sample, flatten]) // in theory this reacts only to path change, while sample shouldn't change
   // find data keys, react to data change
   const [keys, setKeys] = useState([])
@@ -48,13 +57,7 @@ export const useSample = (sample) => {
   const [typedKeys, setTypedKeys] = useState({})
   useEffect(() => {
     if (keys?.length && data?.length) {
-      const parseKeys = {}
-      keys.forEach(key => {
-        const type = typeof data[0][key]
-        parseKeys[type] = parseKeys[type] || []
-        parseKeys[type].push(key)
-      })
-      setTypedKeys(parseKeys)
+      setTypedKeys(buildTypedKeys({ keys, data }))
     } else {
       setTypedKeys({})
     }
@@ -76,7 +79,7 @@ export const useSample = (sample) => {
 const request = (...fetchParams) => fetch(...fetchParams).then(res => res.json())
 
 // Note: url and fetchOptions should be managed by a reducer (or similarly centralized store)
-export const useExplorer = ({ url, fetchOptions }) => {
+export const useExplorer = ({ url, fetchOptions }, useSampleOptions = {}) => {
   // fetch sample data from given API endpoint
   const [sample, setSample] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -94,7 +97,7 @@ export const useExplorer = ({ url, fetchOptions }) => {
   }, [url, fetchOptions])
 
   return {
-    ...useSample(sample),
+    ...useSample(sample, useSampleOptions),
     loading,
     error,
   }

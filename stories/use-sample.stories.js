@@ -9,7 +9,7 @@ import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-import { useSample } from '../src'
+import { useSample, utils } from '../src'
 import SAMPLES from './data/samples'
 import RawDisplay from './components/raw-display'
 import LineChart from './components/line-chart'
@@ -139,6 +139,65 @@ export const Raw = () => { // raw explorer
       <div>
         <RawDisplay data={data} />
       </div>
+    </div>
+  )
+}
+
+export const CustomKeyParsing = () => {
+  const [sample, setSample] = useState({})
+  const {
+    data,
+    paths,
+    path,
+    setPath,
+    keys,
+    typedKeys,
+    flatten,
+    setFlatten,
+  } = useSample(sample, {
+    buildKeys: (data) => {
+      // build keys using all data rows
+      if (!Array.isArray(data) || data.length === 0 || utils.isPrimitive(data[0])) {
+        return []
+      }
+      // build common keys from all data rows
+      return data
+        .map((row) => Object.keys(row))
+        .filter((keys) => keys.length > 0)
+        .reduce((acc, keys) => keys.filter(Set.prototype.has, new Set(acc)))
+    },
+    buildTypedKeys: ({ keys, data }) => {
+      const parsed = {}
+      keys.filter((key) => utils.isPrimitive(data[0][key])).forEach((key) => {
+        let type = typeof data[0][key]
+        // special cases such as date/time to be parsed as strings
+        if (['date', 'time', 'hour', 'year'].some((n) => key.toLowerCase().includes(n))) {
+          type = 'string'
+        }
+        parsed[type] = parsed[type] || []
+        parsed[type].push(key)
+      })
+      return parsed
+    },
+  })
+
+  return (
+    <div className='flex flex-row'>
+      <div className='mr-3'>
+        <SampleControls sample={sample} setSample={setSample} paths={paths} path={path} setPath={setPath} flatten={flatten} setFlatten={setFlatten} />
+      </div>
+      {data && (
+        <div className='flex flex-row'>
+          <div className='mr-3'>
+            <strong>Data keys</strong>
+            <pre>{JSON.stringify(keys, null, 2)}</pre>
+          </div>
+          <div>
+            <strong>Typed data keys</strong>
+            <pre>{JSON.stringify(typedKeys, null, 2)}</pre>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

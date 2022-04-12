@@ -17,7 +17,7 @@ export const findArrayPaths = (obj) => {
 
 export const getByPath = (obj, path) => path.reduce((acc, key) => acc[key], obj)
 
-export const buildKeys = (data) => {
+export const firstRowKeys = (data) => {
   if (!Array.isArray(data) || data.length === 0 || isPrimitive(data[0]) || !data[0]) {
     return []
   }
@@ -25,6 +25,16 @@ export const buildKeys = (data) => {
   return Object.entries(data[0])
     .filter(([, value]) => isPrimitive(value))
     .map(([key]) => key)
+}
+
+export const buildJSTypedKeys = ({ keys, data }) => {
+  const parseKeys = {}
+  keys.forEach(key => {
+    const type = typeof data[0][key]
+    parseKeys[type] = parseKeys[type] || []
+    parseKeys[type].push(key)
+  })
+  return parseKeys
 }
 
 // flatten nested objects and arrays as dot-separated root keys

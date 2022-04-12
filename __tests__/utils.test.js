@@ -1,8 +1,10 @@
 import {
   isPrimitive,
-  findArrayPaths,
   getByPath,
-  buildKeys,
+  // pluggable utils
+  findArrayPaths,
+  firstRowKeys,
+  buildJSTypedKeys,
   flattenAsDot,
 } from '../src/utils'
 
@@ -47,8 +49,17 @@ describe('utils', () => {
     [{}, []],
     [{ a: 1 }, []],
     [[{ x: 1, y: 2 }, { x: 3, y: 5 }], ['x', 'y']],
-  ])('buildKeys(%j) should return %j', (input, expected) => {
-    expect(buildKeys(input)).toStrictEqual(expected)
+  ])('firstRowKeys(%j) should return %j', (input, expected) => {
+    expect(firstRowKeys(input)).toStrictEqual(expected)
+  })
+
+  test.each([
+    [[], [], {}],
+    [['a'], [{ a: 1 }], { number: ['a'] }],
+    [['a', 'b', 'c', 'd'], [{ a: 1, b: 2, c: 3, d: '4' }], { number: ['a', 'b', 'c'], string: ['d'] }],
+    [['a', 'b', 'c', 'd'], [{ a: {}, b: 2, c: 3, d: '4' }], { number: ['b', 'c'], string: ['d'], object: ['a'] }],
+  ])('buildJSTypedKeys({ %j, %j }) should return %j', (keys, data, expected) => {
+    expect(buildJSTypedKeys({ keys, data })).toStrictEqual(expected)
   })
 
   test.each([
